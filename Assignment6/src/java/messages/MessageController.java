@@ -20,6 +20,7 @@ public class MessageController {
     private List<Message> messages;
 
     public MessageController() {
+        messages = new ArrayList<>();
     }
 
     public JsonArray getAllJson() {
