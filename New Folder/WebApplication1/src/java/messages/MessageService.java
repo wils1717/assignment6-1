@@ -1,4 +1,4 @@
-package services;
+package messages;
 
 
 import javax.enterprise.context.ApplicationScoped;
@@ -52,17 +52,4 @@ public class MessageService {
         return Response.ok(m.toJSON().toString()).build();
     }
     
-    @DELETE
-    @Path("[id]")
-    public Response del(@PathParam("id"))
-    
-    @GET
-    @Path("{from}/{to}")
-//    @POST
-//    @Consumes("application/json")
-//    @Produces("application/json")
-//    public JsonArray add(String str) {
-//        JsonObject json = Json.createReader(new StringReader(str)).readObject();
-//        messageList.add(json.getString(str));
-//    }
 }
