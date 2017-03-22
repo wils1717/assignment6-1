@@ -1,24 +1,14 @@
 package messages;
 
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 
 /**
  *
@@ -26,39 +16,30 @@ import javax.persistence.NamedQuery;
  */
 
 
-//@Entity
-//@NamedQueries({
-//    @NamedQuery(name = "Message.findAll", query = "SELECT m FROM Message m"),
-//    @NamedQuery(name = "Message.findById", query = "SELECT m FROM Message m WHERE m.id = :id"),
-//    @NamedQuery(name = "Message.findByTime", query = "SELECT m FROM Message m WHERE m.senttime = :senttime")
-//})
-public class Message implements Serializable{
-    
-    @Id
+public class Message {
+
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     private int id;
     private String title;
     private String contents;
     private String author;
-    private String senttime;
-    private DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ");
+    private Date senttime;
+
     public Message() {
-        
     }
 
-    public Message(int id, String title, String contents, String author, String senttime) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
-        this.author = author;
-        this.senttime = senttime;
-    }
-    
-    public Message(JsonObject json) {
+    public Message(JsonObject json) {        
         id = json.getInt("id", 0);
         title = json.getString("title", "");
         contents = json.getString("contents", "");
         author = json.getString("author", "");
-        senttime = json.getString("senttime", "");
+        String timeStr = json.getString("senttime", "");
+        try {
+            senttime = sdf.parse(timeStr);
+        } catch (ParseException ex) {
+            senttime = new Date();
+            Logger.getLogger(Message.class.getName()).log(Level.SEVERE, null, "Failed Parsing Date: " + timeStr);
+        }
     }
 
     public int getId() {
@@ -93,27 +74,22 @@ public class Message implements Serializable{
         this.author = author;
     }
 
-    public Date getSenttime() throws ParseException {
-        
-        Date senttime = df.parse(this.senttime);
+    public Date getSenttime() {
         return senttime;
     }
 
-    public void setSenttime(String senttime) {
-        
+    public void setSenttime(Date senttime) {
         this.senttime = senttime;
     }
-    
-    
-    public JsonObject toJSON() {
+
+    public JsonObject toJson() {
+        String timeStr = sdf.format(senttime);
         return Json.createObjectBuilder()
                 .add("id", id)
                 .add("title", title)
                 .add("contents", contents)
                 .add("author", author)
-                .add("senttime", senttime)
+                .add("senttime", timeStr)
                 .build();
     }
-    
-    
 }
